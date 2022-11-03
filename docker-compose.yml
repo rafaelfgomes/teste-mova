@@ -1,0 +1,53 @@
+version: "3.4"
+
+services:
+  php:
+    volumes:
+      - ./backend:/var/www/html
+    container_name: mova_app_php
+    build:
+      context: .
+      dockerfile: ./docker/backend/php/Dockerfile
+    networks:
+      net:
+
+  ws-backend:
+    volumes:
+      - ./backend:/var/www/html
+    container_name: mova_app_ws_back
+    build:
+      context: .
+      dockerfile: ./docker/backend/nginx/Dockerfile
+    ports:
+      - "${BACKEND_PORT}:8080"
+    depends_on:
+      - "php"
+    networks:
+      net:
+
+  frontend:
+    volumes:
+      - ./frontend:/var/www/html
+    container_name: mova_app_front
+    build:
+      context: .
+      dockerfile: ./docker/frontend/nginx/Dockerfile
+    ports:
+      - "${FRONTEND_PORT}:80"
+    depends_on:
+      - "ws-backend"
+    networks:
+      net:
+
+  mail:
+    image: mailhog/mailhog
+    container_name: mova_app_mail
+    logging:
+      driver: 'none'
+    ports:
+      - "${MAIL_WEB_PORT}:8025"
+    networks:
+      net:
+
+networks:
+  net:

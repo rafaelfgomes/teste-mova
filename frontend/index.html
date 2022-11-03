@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mova Email Notification</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  </head>
+  
+  <body>
+
+    <main class="container my-5">
+      <div class="row text-center">
+        <div class="col">
+          <h1>Teste de notificação</h1>
+        </div>
+      </div>
+
+      <div class="row my-4">
+        <div class="col text-center">
+          <p>
+            Ao receber um e-mail na sua caixa de entrada o usuário recebrá uma notificação
+            nesta página:
+          </p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div id="app">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item" v-for="message in messages">
+                {{message}}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+
+    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <script>
+      // Enable pusher logging - don't include this in production
+      Pusher.logToConsole = true;
+
+      var pusher = new Pusher('78d533e53d0229c97442', {
+        cluster: 'sa1'
+      });
+
+      var channel = pusher.subscribe('email-notification');
+      channel.bind('email-sent', function(data) {
+        app.messages.push(data.message);
+      });
+
+      // Vue application
+      const app = new Vue({
+        el: '#app',
+        data: {
+          messages: [],
+        },
+      });
+    </script>
+  </body>
+</html>
